@@ -64,9 +64,11 @@ La position du chauffeur est **mise à jour en continu** (servlets `UpdateLocati
 
 ### 🚚 Espace chauffeur
 
-Le chauffeur dispose de son propre espace : ses voyages assignés, leur statut et son calendrier.
+Le chauffeur dispose de son propre espace : son tableau de bord et la **liste de ses voyages assignés** (statuts, dates, actions dont la géolocalisation).
 
-![Espace chauffeur](docs/09_driver_dashboard.png)
+| Tableau de bord chauffeur | Voyages assignés au chauffeur |
+|:---:|:---:|
+| ![Chauffeur](docs/09_driver_dashboard.png) | ![Voyages assignés](docs/10_driver_trips.png) |
 
 ## 🛠️ Stack technique
 
