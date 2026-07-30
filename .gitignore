@@ -17,3 +17,13 @@ RapportProjetS3_Rhaymi.pdf
 
 # Secrets éventuels
 *.env
+
+# Cartes générées / expérimentales
+map*
+
+# Images template / lourdes (non nécessaires au repo)
+src/main/webapp/image/
+src/main/webapp/images/
+
+# Photo personnelle (vie privée)
+src/main/webapp/img/Rhaymi_Abdellatif.jpg
