@@ -19,42 +19,54 @@ Une entreprise de transport doit coordonner ses **véhicules**, ses **chauffeurs
 - 👥 **Rôles distincts** : administrateur et chauffeur (espaces séparés)
 - 🔐 **Authentification** et gestion des utilisateurs
 
-## 🖼️ Aperçu
+## 🏗️ Architecture
 
-| Tableau de bord analytique | Optimisation d'itinéraire |
-|:---:|:---:|
-| ![Dashboard](docs/03_dashboard.png) | ![Route](docs/07_route_optimization.png) |
+Application **MVC** en Java/J2EE. Les **Servlets** (contrôleurs) traitent les requêtes, la couche **DAO** dialogue avec **MySQL**, et l'optimisation d'itinéraire est déléguée à des **scripts Python** interrogeant l'API **OpenRouteService**.
 
-| Gestion de flotte | Suivi du chauffeur en temps réel |
+![Architecture du système](docs/architecture.svg)
+
+- **Vue** : pages **JSP** (+ Bootstrap, Leaflet) — back-office, espace chauffeur et site public
+- **Contrôleur** : **Servlets** (`ControleurServlet`, `DemandeServlet`, `VoyageServlet`, `TrajetVoyageservlet`, `UpdateLocationServlet`…)
+- **Modèle** : entités (`Vehicule`, `Voyage`, `Trajet`, `Demande`, `Utilisateur`, `Location`) + couche **DAO** (interface + implémentation par entité)
+- **Base de données** : **MySQL** (via `SingletonConnection` JDBC)
+
+## ⭐ Fonctionnalités phares
+
+### 🧭 Optimisation d'itinéraire
+
+À partir des adresses des demandes regroupées dans un voyage, le système calcule le **trajet optimal** : le servlet transmet les coordonnées à un script Python (`route_optimizer.py`) qui interroge l'API **OpenRouteService**, récupère la **distance** et la **durée** du meilleur parcours, puis génère le **tracé sur la carte**. Le planificateur visualise ainsi l'itinéraire à suivre et son coût estimé.
+
+![Optimisation d'itinéraire](docs/07_route_optimization.png)
+
+### 📍 Suivi du chauffeur en temps réel
+
+La position du chauffeur est **mise à jour en continu** (servlets `UpdateLocationServlet` / `GetLocationServlet`) et affichée en direct sur une carte **Leaflet**, superposée au trajet prévu. L'administrateur suit ainsi l'avancement réel de la livraison par rapport à l'itinéraire optimal.
+
+![Suivi en temps réel](docs/08_driver_tracking.png)
+
+## 🖼️ Interfaces par rôle
+
+### 🌐 Site public & accès
+
+| Site vitrine / suivi d'expédition | Connexion |
 |:---:|:---:|
-| ![Véhicules](docs/04_vehicles.png) | ![Tracking](docs/08_driver_tracking.png) |
+| ![Landing](docs/01_landing.png) | ![Connexion](docs/02_login.png) |
+
+### 🛠️ Espace administrateur
+
+| Tableau de bord analytique | Gestion de flotte |
+|:---:|:---:|
+| ![Dashboard](docs/03_dashboard.png) | ![Véhicules](docs/04_vehicles.png) |
 
 | Demandes de livraison | Gestion des voyages |
 |:---:|:---:|
 | ![Demandes](docs/05_requests.png) | ![Voyages](docs/06_trips.png) |
 
-| Espace chauffeur | Site public / connexion |
-|:---:|:---:|
-| ![Chauffeur](docs/09_driver_dashboard.png) | ![Landing](docs/01_landing.png) |
+### 🚚 Espace chauffeur
 
-## 🏗️ Architecture
+Le chauffeur dispose de son propre espace : ses voyages assignés, leur statut et son calendrier.
 
-Application **MVC** en Java/J2EE :
-
-```
-Navigateur (JSP + Bootstrap)
-      │  HTTP
-      ▼
-Servlets (contrôleurs)  ──►  Modèles + DAO  ──►  MySQL
-      │
-      └──►  Scripts Python (OpenRouteService + Folium)  →  carte d'itinéraire
-```
-
-- **Vue** : pages **JSP** (+ Bootstrap) — back-office et site public
-- **Contrôleur** : **Servlets** (`ControleurServlet`, `DemandeServlet`, `VoyageServlet`, `TrajetVoyageservlet`, `UpdateLocationServlet`…)
-- **Modèle** : entités (`Vehicule`, `Voyage`, `Trajet`, `Demande`, `Utilisateur`, `Location`) + couche **DAO** (interface + implémentation par entité)
-- **Base de données** : **MySQL** (accès via un `SingletonConnection` JDBC)
-- **Optimisation d'itinéraire** : scripts Python (`route_optimizer.py`, `route_map_generator.py`, `route_service.py`) appelés depuis les servlets, qui interrogent **OpenRouteService** et génèrent la carte du trajet
+![Espace chauffeur](docs/09_driver_dashboard.png)
 
 ## 🛠️ Stack technique
 
